@@ -15,6 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -28,28 +29,64 @@ import com.bekvon.bukkit.residence.protection.ClaimedResidence;
  *
  */
 public class ResidenceSigns extends JavaPlugin {
-	public static ResidenceSigns plugin;
 	private RSBlockListener blockListener = new RSBlockListener();
 	private RSPlayerListener playerListener = new RSPlayerListener();
 	private RSEventListener eventListener = new RSEventListener();
 	public final static HashMap<Player, ArrayList<Block>> RSUsers = new HashMap<Player, ArrayList<Block>>();
-	public String name;
-	public String version;
+	public String name = this.getDescription().getName();
+	public String version = this.getDescription().getVersion();
 	public final Logger log = Logger.getLogger("Minecraft");
-
+	
+	// Settings
+	public boolean UseColors;
+	public String Locale;
+	
+	// Locales
+	public String ForSaleSignFirstLine, RentSignFirstLine, ForSaleSignFormatMessage, RentSignFormatMessage, 
+			InvalidPrice, Available, Sold, ResAdminModeEnabled, ResAdminModeDisabled;
+	
 	@Override
 	public void onDisable() {
 		log.info(name + " disabled.");
 	}
 	
 	@Override
-	public void onEnable() {
-		name = this.getDescription().getName();
-		version = this.getDescription().getVersion();
-		PluginManager pm = this.getServer().getPluginManager();	
+	public void onEnable() {		
+		// Check if Residence is loaded, if not try to load it.
+		PluginManager pm = this.getServer().getPluginManager();
+		Plugin p = pm.getPlugin("Residence");
+		if (p != null) {
+			if (!p.isEnabled()) {
+				// Residence was found, but not loaded yet.
+				log.info(name + " Manually enabling Residence.");
+				pm.enablePlugin(p);
+			}
+		} else {
+			// Residence was not found.
+			log.info(name +  " Residence was not found, disabling.");
+			this.setEnabled(false);
+			return;
+		}
+		
+		// Register our events
 		pm.registerEvent(Type.SIGN_CHANGE, blockListener, Priority.Normal, this);
 		pm.registerEvent(Type.PLAYER_INTERACT, playerListener, Priority.Normal, this);
 		pm.registerEvent(Type.CUSTOM_EVENT, eventListener, Priority.Normal, this);
+		
+		// Initialize the Config.
+		RSConfig config = new RSConfig();
+		config.configCheck();
+		
+		// Initialize the locale.
+		RSLocale locale = new RSLocale();
+		locale.localeCheck();
+
+		// Check if H2 library is installed, if not try to download it.
+		// TODO: http://dl.dropbox.com/u/41672/h2.jar
+		
+		// Initialize our Database backend.
+		// TODO
+		
 		log.info(name + " v" + version + " enabled.");
 	}
 	
@@ -65,7 +102,7 @@ public class ResidenceSigns extends JavaPlugin {
 			ClaimedResidence resName = checkLocation(loc);
 			
 			if (commandName.equals("rsadmin")) {
-				if (Residence.getPermissionManager().isResidenceAdmin((Player) sender)) {
+				if (Residence.getPermissionManager().isResidenceAdmin(player)) {
 					toggleResAdmin(player);
 				} else {
 					player.sendMessage(ChatColor.RED + Residence.getLanguage().getPhrase("AdminOnly"));
@@ -92,7 +129,7 @@ public class ResidenceSigns extends JavaPlugin {
 					rentManager.rent(player, resName.getName(), true, enabled(player));
 					return true;
 				}
-			} else if (commandName.equals("unrent")) { // TODO: fix!
+			} else if (commandName.equals("unrent")) {
 				// Check for arguments and assign resName if someone is using residence name instead of location.
 				if (args.length > 0) {
 					resName = checkName(args[0]);
@@ -128,7 +165,7 @@ public class ResidenceSigns extends JavaPlugin {
 						try {
 							price = Integer.parseInt(number);
 						} catch (Exception e) {
-							player.sendMessage(ChatColor.RED + "Invalid price...");
+							player.sendMessage(ChatColor.RED + InvalidPrice);
 							return true;
 						}
 						transManager.putForSale(resName.getName(), player, Math.abs(price), enabled(player));
@@ -147,29 +184,29 @@ public class ResidenceSigns extends JavaPlugin {
 
 	public void toggleResAdmin(Player player) {
 		if (enabled(player)) {
-			ResidenceSigns.RSUsers.remove(player);
-			player.sendMessage(ChatColor.YELLOW + "ResAdmin mode disabled.");
+			RSUsers.remove(player);
+			player.sendMessage(ChatColor.YELLOW + ResAdminModeDisabled);
 		} else {
-			ResidenceSigns.RSUsers.put(player, null);
-			player.sendMessage(ChatColor.YELLOW + "ResAdmin mode enabled.");
+			RSUsers.put(player, null);
+			player.sendMessage(ChatColor.YELLOW + ResAdminModeEnabled);
 		}
 	}
 
-	public static boolean enabled(Player player) {
+	public boolean enabled(Player player) {
 		return RSUsers.containsKey(player);
 	}
 	
-	public static ClaimedResidence checkLocation(Location loc) {
+	public ClaimedResidence checkLocation(Location loc) {
 		ClaimedResidence res = Residence.getResidenceManger().getByLoc(loc);
 		return res;
 	}
 	
-	public static ClaimedResidence checkName(String resName) {
+	public ClaimedResidence checkName(String resName) {
 		ClaimedResidence res = Residence.getResidenceManger().getByName(resName);
 		return res;
 	}
 	
-	public static boolean checkNumber(String number) {
+	public boolean checkNumber(String number) {
 		if (number.matches("((-|\\+)?[0-9]+(\\.[0-9]+)?)+")) {
 			return true;
 		} else {
