@@ -1,0 +1,22 @@
+name: ResidenceSigns
+main: us.rgaming.residencesigns.ResidenceSigns
+version: 0.2
+author: KarnEdge
+description: Sign usage for Market commands in Residence mod.
+depend: [Residence]
+commands:
+  rsadmin:
+    description: Toggles /resadmin mode when placing or using market signs and using shorthand residence commands.
+    usage: /<command>
+  rent:
+    description: Shortened command for renting; if <residenceName> is not given, it will use the current location's residence if any. 
+    usage: /<command> <residenceName>
+  unrent:
+    description: Shortened command for releasing a rented residence; if <residenceName> is not given, it will use the current location's residence if any.
+    usage: /<command> <info> <residenceName>
+  land:
+    description: Shortened command for buying/selling land; if <residenceName> is not given, it will use the current location's residence if any. [Price] must be included when using /land sell.
+    usage: /<command> [info] <residenceName>
+           /<command> [buy] <residenceName>
+           /<command> [sell] <residenceName> [price]
+           /<command> [remove] <residenceName>

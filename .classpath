@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/KarnEdge/AppData/Roaming/.craftbukkit/craftbukkit-0.0.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="C:/Users/KarnEdge/AppData/Roaming/.craftbukkit/plugins/Residence.jar"/>
+	<classpathentry kind="lib" path="C:/Users/KarnEdge/AppData/Roaming/.craftbukkit/lib/h2.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
