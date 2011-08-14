@@ -3,6 +3,7 @@
  */
 package us.rgaming.residencesigns;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -33,17 +34,24 @@ public class ResidenceSigns extends JavaPlugin {
 	private RSPlayerListener playerListener = new RSPlayerListener();
 	private RSEventListener eventListener = new RSEventListener();
 	public final static HashMap<Player, ArrayList<Block>> RSUsers = new HashMap<Player, ArrayList<Block>>();
-	public String name = this.getDescription().getName();
-	public String version = this.getDescription().getVersion();
-	public final Logger log = Logger.getLogger("Minecraft");
+	public static String name;
+	public String version;
+	public final static Logger log = Logger.getLogger("Minecraft");
 	
 	// Settings
-	public boolean UseColors;
-	public String Locale;
+	public static boolean UseColors;
+	public static String Locale;
 	
 	// Locales
-	public String ForSaleSignFirstLine, RentSignFirstLine, ForSaleSignFormatMessage, RentSignFormatMessage, 
-			InvalidPrice, Available, Sold, ResAdminModeEnabled, ResAdminModeDisabled;
+	public static String ForSaleSignFirstLine;
+	public static String RentSignFirstLine;
+	public static String ForSaleSignFormatMessage;
+	public static String RentSignFormatMessage;
+	public static String InvalidPrice;
+	public static String Available;
+	public static String Sold;
+	public static String ResAdminModeEnabled;
+	public static String ResAdminModeDisabled;
 	
 	@Override
 	public void onDisable() {
@@ -51,7 +59,10 @@ public class ResidenceSigns extends JavaPlugin {
 	}
 	
 	@Override
-	public void onEnable() {		
+	public void onEnable() {	
+		name = this.getDescription().getName();
+		version = this.getDescription().getVersion();
+		
 		// Check if Residence is loaded, if not try to load it.
 		PluginManager pm = this.getServer().getPluginManager();
 		Plugin p = pm.getPlugin("Residence");
@@ -82,7 +93,10 @@ public class ResidenceSigns extends JavaPlugin {
 		locale.localeCheck();
 
 		// Check if H2 library is installed, if not try to download it.
-		// TODO: http://dl.dropbox.com/u/41672/h2.jar
+		// Thanks to Flex for this information
+		if (!new File("lib" + File.separator, "h2.jar").exists()) {
+			Downloader.install("http://dl.dropbox.com/u/41672/h2.jar", "h2.jar");
+		}
 		
 		// Initialize our Database backend.
 		// TODO
@@ -192,16 +206,16 @@ public class ResidenceSigns extends JavaPlugin {
 		}
 	}
 
-	public boolean enabled(Player player) {
+	public static boolean enabled(Player player) {
 		return RSUsers.containsKey(player);
 	}
 	
-	public ClaimedResidence checkLocation(Location loc) {
+	public static ClaimedResidence checkLocation(Location loc) {
 		ClaimedResidence res = Residence.getResidenceManger().getByLoc(loc);
 		return res;
 	}
 	
-	public ClaimedResidence checkName(String resName) {
+	public static ClaimedResidence checkName(String resName) {
 		ClaimedResidence res = Residence.getResidenceManger().getByName(resName);
 		return res;
 	}
