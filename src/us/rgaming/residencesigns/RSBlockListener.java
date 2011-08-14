@@ -18,20 +18,18 @@ import com.bekvon.bukkit.residence.protection.ClaimedResidence;
  *
  */
 public class RSBlockListener extends BlockListener {
-	public static ResidenceSigns plugin;
-	
 	public void onSignChange(SignChangeEvent event) {
 		String signType = event.getLine(0).toLowerCase();
-		if ((signType.equals(plugin.RentSignFirstLine)) || (signType.equals(plugin.ForSaleSignFirstLine))) {
+		if ((signType.equals(ResidenceSigns.RentSignFirstLine)) || (signType.equals(ResidenceSigns.ForSaleSignFirstLine))) {
 			RentManager rentManager = Residence.getRentManager();
 			TransactionManager transManager = Residence.getTransactionManager();
 			Player player = event.getPlayer();
 			
 			// By default, we always check the sign's location for residence.
 			Location loc = event.getBlock().getLocation();
-			ClaimedResidence res = plugin.checkLocation(loc);		
-			if (plugin.checkName(event.getLine(2)) != null) {
-				res = plugin.checkName(event.getLine(2));
+			ClaimedResidence res = ResidenceSigns.checkLocation(loc);		
+			if (ResidenceSigns.checkName(event.getLine(2)) != null) {
+				res = ResidenceSigns.checkName(event.getLine(2));
 			} else if (res == null) {
 				player.sendMessage(ChatColor.RED + Residence.getLanguage().getPhrase("InvalidResidence"));
 				event.setLine(0, ChatColor.RED + event.getLine(0));
@@ -40,9 +38,9 @@ public class RSBlockListener extends BlockListener {
 			
 			String resName = res.getName();
 			String price = "";
-			String status = ChatColor.GREEN + plugin.Available;
+			String status = ChatColor.GREEN + ResidenceSigns.Available;
 
-			if (signType.equals(plugin.RentSignFirstLine)) {
+			if (signType.equals(ResidenceSigns.RentSignFirstLine)) {
 				int cost = 0;
 				int days = 0;
 				boolean renew = true;
@@ -61,17 +59,17 @@ public class RSBlockListener extends BlockListener {
 						cost = Integer.parseInt(setup[0]);
 						days = Integer.parseInt(setup[1]);
 					} catch (Exception e) {
-						player.sendMessage(ChatColor.RED + plugin.RentSignFormatMessage);
+						player.sendMessage(ChatColor.RED + ResidenceSigns.RentSignFormatMessage);
 						event.setLine(0, ChatColor.RED + event.getLine(0));
 						return;
 					}
 					if (setup.length > 1) {
 						renew = (!setup[2].equalsIgnoreCase("f"));
 					}
-					rentManager.setForRent(player, resName, Math.abs(cost), Math.abs(days), renew, plugin.enabled(player));
+					rentManager.setForRent(player, resName, Math.abs(cost), Math.abs(days), renew, ResidenceSigns.enabled(player));
 				}
 				price = cost + "/" + days + "d";
-			} else if (signType.equals(plugin.ForSaleSignFirstLine)) {
+			} else if (signType.equals(ResidenceSigns.ForSaleSignFirstLine)) {
 				int cost = 0;
 				if (transManager.isForSale(resName)) {
 					cost = transManager.getSaleAmount(resName);
@@ -83,11 +81,11 @@ public class RSBlockListener extends BlockListener {
 					try {
 						cost = Integer.parseInt(event.getLine(1));
 					} catch (Exception e) {
-						player.sendMessage(ChatColor.RED + plugin.ForSaleSignFormatMessage);
+						player.sendMessage(ChatColor.RED + ResidenceSigns.ForSaleSignFormatMessage);
 						event.setLine(0, ChatColor.RED + event.getLine(0));
 						return;
 					}
-					transManager.putForSale(resName, player, Math.abs(cost), plugin.enabled(player));
+					transManager.putForSale(resName, player, Math.abs(cost), ResidenceSigns.enabled(player));
 				}
 				price = cost + "";
 			}

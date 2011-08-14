@@ -11,9 +11,7 @@ import org.bukkit.util.config.Configuration;
  *
  */
 public class RSConfig {
-	public static ResidenceSigns plugin;
-
-	public String directory = "plugins" + File.separator + plugin.name;
+	public String directory = "plugins" + File.separator + ResidenceSigns.name;
 	File file = new File(directory + File.separator + "config.yml");
 	Configuration config = null;
 	
@@ -35,7 +33,7 @@ public class RSConfig {
 		
 		// Check if configuration exists. 
 		if (!file.exists()) {
-			plugin.log.info(plugin.name + " Creating configuration.");
+			ResidenceSigns.log.info(ResidenceSigns.name + " Creating configuration.");
 			try {
 				file.createNewFile();
 			} catch (Exception ex) {
@@ -51,12 +49,12 @@ public class RSConfig {
 	}
 
 	private void loadSettings() {
-		plugin.UseColors = config.getBoolean("UseColors", true);
-		plugin.Locale = config.getString("Locale");
+		ResidenceSigns.UseColors = config.getBoolean("UseColors", true);
+		ResidenceSigns.Locale = config.getString("Locale");
 	}
 
 	private void checkSettings() {
-		plugin.log.info(plugin.name + "Generating default settings.");
+		ResidenceSigns.log.info(ResidenceSigns.name + "Generating default settings.");
 		
 		if (config.getProperty("UseColors") == null) {
 			config.setProperty("UseColors", true);

@@ -12,10 +12,8 @@ import org.bukkit.util.config.Configuration;
  *
  */
 public class RSLocale {
-	public static ResidenceSigns plugin;
-	
-	public String directory = "plugins" + File.separator + plugin.name;
-	File file = new File(directory + File.separator + plugin.Locale + ".locale");
+	public String directory = "plugins" + File.separator + ResidenceSigns.name;
+	File file = new File(directory + File.separator + ResidenceSigns.Locale + ".locale");
 	Configuration locale = null;
 	
 	
@@ -37,7 +35,7 @@ public class RSLocale {
 		
 		// Check if configuration exists. 
 		if (!file.exists()) {
-			plugin.log.info(plugin.name + " Creating " + plugin.Locale + ".locale with defaults from english.locale.");
+			ResidenceSigns.log.info(ResidenceSigns.name + " Creating " + ResidenceSigns.Locale + ".locale with defaults from english.locale.");
 			try {
 				file.createNewFile();
 			} catch (Exception ex) {
@@ -53,15 +51,15 @@ public class RSLocale {
 	}
 
 	private void loadLocales() {
-		plugin.ForSaleSignFirstLine = locale.getString("ForSaleSignFirstLine").toLowerCase();
-		plugin.RentSignFirstLine = locale.getString("RentSignFirstLine").toLowerCase();
-		plugin.ForSaleSignFormatMessage = locale.getString("ForSaleSignFormatMessage");
-		plugin.RentSignFormatMessage = locale.getString("RentSignFormatMessage");
-		plugin.InvalidPrice = locale.getString("InvalidPrice");
-		plugin.Available = locale.getString("Available");
-		plugin.Sold = locale.getString("Sold");
-		plugin.ResAdminModeEnabled = locale.getString("ResAdminModeEnabled");
-		plugin.ResAdminModeDisabled = locale.getString("ResAdminModeDisabled");
+		ResidenceSigns.ForSaleSignFirstLine = locale.getString("ForSaleSignFirstLine").toLowerCase();
+		ResidenceSigns.RentSignFirstLine = locale.getString("RentSignFirstLine").toLowerCase();
+		ResidenceSigns.ForSaleSignFormatMessage = locale.getString("ForSaleSignFormatMessage");
+		ResidenceSigns.RentSignFormatMessage = locale.getString("RentSignFormatMessage");
+		ResidenceSigns.InvalidPrice = locale.getString("InvalidPrice");
+		ResidenceSigns.Available = locale.getString("Available");
+		ResidenceSigns.Sold = locale.getString("Sold");
+		ResidenceSigns.ResAdminModeEnabled = locale.getString("ResAdminModeEnabled");
+		ResidenceSigns.ResAdminModeDisabled = locale.getString("ResAdminModeDisabled");
 	}
 
 	private void checkLocales() {
